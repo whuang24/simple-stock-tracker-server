@@ -1,8 +1,16 @@
+const express = require("express")
+const app = express();
+const port = 3000;
+const cors = require('cors')
 require('dotenv').config()
 
-const finnhub = require('finnhub');
+import finnhubClient from './finnhub.js'
 
-const api_key = finnhub.ApiClient.instance.authentications['api_key'];
-api_key.apiKey = process.env.FINNHUB_API_KEY;
-const finnhubClient = new finnhub.DefaultApi()
+app.use(express.urlencoded({extnded: true}));
+app.use(express.json());
+app.use(cors());
+
+app.listen(port, () => {
+    console.log(`Listening at http://localhost:${port}`)
+})
 
