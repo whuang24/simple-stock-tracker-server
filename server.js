@@ -1,6 +1,8 @@
-const express = require("express")
+import express, { Router } from "express";
+import serverless from "serverless-http";
+
 const app = express();
-const port = 5000;
+const router = Router();
 const cors = require('cors')
 require('dotenv').config()
 
@@ -51,7 +53,7 @@ app.get("/", cors(), async (req, res) => {
     res.send("")
 })
 
-app.listen(port, () => {
-    console.log(`Listening at http://localhost:${port}`)
-})
+app.use("/api/", router);
+
+export const handler = serverless(app);
 
