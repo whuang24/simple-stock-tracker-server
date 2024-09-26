@@ -9,9 +9,32 @@ require('dotenv').config()
 import finnhubClient from './finnhub.js'
 import {db, graphDataCollection} from './firebase.js'
 
-app.use(express.urlencoded({extnded: true}));
 app.use(express.json());
 app.use(cors());
+
+let stockWatchlist = [];
+
+app.get('/watchlist', (req, res) => {
+    res.json({watchlist: stockWatchlist})
+})
+
+app.post('/add-stock', (req, res) => {
+    const { symbol } = req.body;
+  
+    if (!symbol) {
+      return res.status(400).json({ error: 'Stock symbol is required' });
+    }
+  
+    if (stockWatchlist.includes(symbol)) {
+      return res.status(400).json({ error: 'Stock symbol already exists in the watchlist' });
+    }
+  
+    // Add the new stock symbol to the list
+    stockWatchlist.push(symbol);
+  
+    // Respond with the updated watchlist
+    res.json({ message: 'Stock symbol added', watchlist: stockWatchlist });
+  });
 
 async function syncWithDatabase(symbol, currTime, currPercent) {
     const docRef = doc(db, "graphData", symbol)
@@ -53,7 +76,8 @@ app.get("/", cors(), async (req, res) => {
     res.send("")
 })
 
-app.use("/api/", router);
-
-export const handler = serverless(app);
+const port = process.env.PORT || 4000;
+app.listen(port, () => {
+    console.log(`Server running on ${port}`)
+})
 
