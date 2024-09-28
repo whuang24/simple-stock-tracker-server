@@ -49,8 +49,8 @@ async function syncWithDatabase(symbol, currTime, currPercent) {
 }
 
 async function fetchData() {
-    for (let i = 0; i < props.watchlist.length; i++) {
-        const symbol = props.watchlist[i];
+    for (let i = 0; i < stockWatchlist.length; i++) {
+        const symbol = stockWatchlist.watchlist[i];
 
         const currTime = new Date();
 
