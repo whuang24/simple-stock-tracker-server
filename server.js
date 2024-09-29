@@ -6,13 +6,15 @@ const router = Router();
 const cors = require('cors')
 require('dotenv').config()
 
-import finnhubClient from './finnhub.js'
+import {finnhubClient, isMarketOpen} from './finnhub.js'
 import {db, graphDataCollection} from './firebase.js'
 
 app.use(express.json());
 app.use(cors());
 
 let stockWatchlist = [];
+
+let marketStatus = false;
 
 app.get('/watchlist', (req, res) => {
     res.json({watchlist: stockWatchlist})
@@ -36,8 +38,14 @@ app.post('/add-stock', (req, res) => {
     res.json({ message: 'Stock symbol added', watchlist: stockWatchlist });
   });
 
+
+async function checkMarket() {
+    const currStatus = await isMarketOpen();
+    marketStatus = currStatus;
+}
+
 async function syncWithDatabase(symbol, currTime, currPercent) {
-    const docRef = doc(db, "graphData", symbol)
+    const docRef = doc(db, process.env.COLLECTION_NAME, symbol)
     await setDoc(docRef, {
         graphData: {
             [new Date().toISOString()]: {
@@ -71,6 +79,10 @@ async function fetchData() {
         })
     }
 }
+
+setInterval(async() => {
+    await checkMarket();
+}, 20000)
 
 app.get("/", cors(), async (req, res) => {
     res.send("")
