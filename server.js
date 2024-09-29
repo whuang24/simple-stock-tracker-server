@@ -58,7 +58,7 @@ async function syncWithDatabase(symbol, currTime, currPercent) {
 
 async function fetchData() {
     for (let i = 0; i < stockWatchlist.length; i++) {
-        const symbol = stockWatchlist.watchlist[i];
+        const symbol = stockWatchlist[i];
 
         const currTime = new Date();
 
@@ -82,11 +82,11 @@ async function fetchData() {
 
 setInterval(async() => {
     await checkMarket();
+    if (marketStatus) {
+        fetchData();
+    }
 }, 20000)
 
-app.get("/", cors(), async (req, res) => {
-    res.send("")
-})
 
 const port = process.env.PORT || 4000;
 app.listen(port, () => {
