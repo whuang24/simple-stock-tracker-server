@@ -20,22 +20,22 @@ app.get('/watchlist', (req, res) => {
     res.json({watchlist: stockWatchlist})
 })
 
-app.post('/add-stock', (req, res) => {
-    const { symbol } = req.body;
+app.post('/updating_watchlist', (req, res) => {
+    const { watchlist } = req.body;
   
-    if (!symbol) {
-      return res.status(400).json({ error: 'Stock symbol is required' });
+    if (!watchlist) {
+      return res.status(400).json({ error: 'Watchlist data is required' });
     }
   
-    if (stockWatchlist.includes(symbol)) {
-      return res.status(400).json({ error: 'Stock symbol already exists in the watchlist' });
+    for (var i = 0; i < watchlist.length; i++) {
+        if (stockWatchlist.includes(symbol)) {
+            return res.status(400).json({ error: 'Stock symbol already exists in the watchlist' });
+        }
     }
   
-    // Add the new stock symbol to the list
-    stockWatchlist.push(symbol);
+    stockWatchlist = watchlist;
   
-    // Respond with the updated watchlist
-    res.json({ message: 'Stock symbol added', watchlist: stockWatchlist });
+    res.json({ message: 'Watchlist updated', watchlist: stockWatchlist });
   });
 
 
