@@ -89,6 +89,7 @@ setInterval(async() => {
 
 
 const port = process.env.PORT || 4000;
+console.log(`Assigned port: ${port}`)
 app.listen(port, () => {
     console.log(`Server running on ${port}`)
 })
