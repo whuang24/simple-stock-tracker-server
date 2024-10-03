@@ -1,11 +1,14 @@
-const express = require('express');
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+
+import {finnhubClient, isMarketOpen} from './finnhub.js';
+import {db, graphDataCollection} from './firebase.js';
+
+dotenv.config();
+
 const app = express();
 const router = express.Router();
-const cors = require('cors')
-require('dotenv').config()
-
-const {finnhubClient, isMarketOpen} = require('./finnhub.js');
-const {db, graphDataCollection} = require('./firebase.js');
 
 app.use(express.json());
 app.use(cors());
