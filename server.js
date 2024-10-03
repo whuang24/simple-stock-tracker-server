@@ -4,8 +4,8 @@ const router = express.Router();
 const cors = require('cors')
 require('dotenv').config()
 
-import {finnhubClient, isMarketOpen} from './finnhub.js'
-import {db, graphDataCollection} from './firebase.js'
+const {finnhubClient, isMarketOpen} = require('./finnhub.js');
+const {db, graphDataCollection} = require('./firebase.js');
 
 app.use(express.json());
 app.use(cors());
