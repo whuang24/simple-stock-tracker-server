@@ -5,8 +5,6 @@ import dotenv from 'dotenv';
 import {finnhubClient, isMarketOpen} from './finnhub.js';
 import {db, graphDataCollection} from './firebase.js';
 
-import fetch from 'node-fetch';
-
 dotenv.config();
 
 const app = express();

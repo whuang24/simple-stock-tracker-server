@@ -1,7 +1,8 @@
 import dotenv from 'dotenv';
+import fetch from 'node-fetch';
+import finnhub from 'finnhub';
 dotenv.config();
 
-import finnhub from 'finnhub';
 
 const api_key = finnhub.ApiClient.instance.authentications['api_key'];
 api_key.apiKey = process.env.FINNHUB_API_KEY;
