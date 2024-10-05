@@ -1,6 +1,7 @@
-require('dotenv').config()
+import dotenv from 'dotenv';
+dotenv.config();
 
-const finnhub = require('finnhub');
+import finnhub from 'finnhub';
 
 const api_key = finnhub.ApiClient.instance.authentications['api_key'];
 api_key.apiKey = process.env.FINNHUB_API_KEY;
