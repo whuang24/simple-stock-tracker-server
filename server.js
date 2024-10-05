@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 import {finnhubClient, isMarketOpen} from './finnhub.js';
 import {db, graphDataCollection} from './firebase.js';
 
+import fetch from 'node-fetch';
+
 dotenv.config();
 
 const app = express();
@@ -82,10 +84,15 @@ async function fetchData() {
 }
 
 setInterval(async() => {
-    await checkMarket();
-    if (marketStatus) {
-        fetchData();
+    try {
+        await checkMarket();
+        if (marketStatus) {
+            fetchData();
+        }
+    } catch (error) {
+        console.error("Error occurred while fetching data:", error);
     }
+    
 }, 20000)
 
 
