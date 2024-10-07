@@ -68,12 +68,6 @@ async function fetchData() {
         const currTimeNum = currTime.getTime();
     
         finnhubClient.quote(symbol, (error, data, response) => {
-            setWatchlistData(oldData => {
-                const newData = new Map(oldData)
-                newData.set(symbol, data)
-                return newData
-            })
-
             if (marketStatus) {
                 syncWithDatabase(symbol, currTimeNum, data.dp);
             }
