@@ -29,6 +29,7 @@ app.post('/updating_watchlist', (req, res) => {
     }
   
     for (var i = 0; i < watchlist.length; i++) {
+        var symbol = watchlist[i];
         if (stockWatchlist.includes(symbol)) {
             return res.status(400).json({ error: 'Stock symbol already exists in the watchlist' });
         }
