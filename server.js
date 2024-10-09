@@ -87,6 +87,10 @@ setInterval(async() => {
     
 }, 20000)
 
+app.get('/', (req, res) => {
+    res.send("Simple Stock Tracker Server Home")
+})
+
 
 const port = process.env.PORT || 4000;
 console.log(`Assigned port: ${port}`)
