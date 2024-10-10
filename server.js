@@ -19,7 +19,7 @@ let marketStatus = false;
 
 app.get('/watchlist', (req, res) => {
     res.json({watchlist: stockWatchlist});
-    console.log(stockWatchlist.toString)
+    console.log(`Watchlist obtained`);
 })
 
 app.post('/updating_watchlist', (req, res) => {
@@ -32,6 +32,7 @@ app.post('/updating_watchlist', (req, res) => {
     stockWatchlist = watchlist;
   
     res.json({ message: 'Watchlist updated', watchlist: stockWatchlist });
+    console.log(`Watchlist updated: ${stockWatchlist}`);
   });
 
 
