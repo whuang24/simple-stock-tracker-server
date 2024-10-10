@@ -18,7 +18,8 @@ let stockWatchlist = [];
 let marketStatus = false;
 
 app.get('/watchlist', (req, res) => {
-    res.json({watchlist: stockWatchlist})
+    res.json({watchlist: stockWatchlist});
+    console.log(stockWatchlist.toString)
 })
 
 app.post('/updating_watchlist', (req, res) => {
@@ -26,13 +27,6 @@ app.post('/updating_watchlist', (req, res) => {
   
     if (!watchlist) {
       return res.status(400).json({ error: 'Watchlist data is required' });
-    }
-  
-    for (var i = 0; i < watchlist.length; i++) {
-        var symbol = watchlist[i];
-        if (stockWatchlist.includes(symbol)) {
-            return res.status(400).json({ error: 'Stock symbol already exists in the watchlist' });
-        }
     }
   
     stockWatchlist = watchlist;
