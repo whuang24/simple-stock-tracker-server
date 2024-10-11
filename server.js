@@ -33,7 +33,11 @@ app.post('/updating_watchlist', (req, res) => {
   
     res.json({ message: 'Watchlist updated', watchlist: stockWatchlist });
     console.log(`Watchlist updated: ${stockWatchlist}`);
-  });
+});
+
+app.post('/fetchingData', (req, res) => {
+    
+})
 
 
 async function checkMarket() {
