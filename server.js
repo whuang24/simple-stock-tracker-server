@@ -35,8 +35,8 @@ app.post('/updating_watchlist', (req, res) => {
     console.log(`Watchlist updated: ${stockWatchlist}`);
 });
 
-app.post('/fetchingData', (req, res) => {
-    
+app.get('/ping', (req, res) => {
+    res.send('Server is still running.')
 })
 
 
