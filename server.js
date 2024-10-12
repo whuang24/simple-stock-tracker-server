@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import fetch from 'node-fetch';
 
 import {finnhubClient, isMarketOpen} from './finnhub.js';
 import {db, graphDataCollection} from './firebase.js';
