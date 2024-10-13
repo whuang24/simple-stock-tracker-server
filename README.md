@@ -21,6 +21,7 @@ A server that fetches and stores stock data. Currently in the works.
 
 - [![Finnhub][Finnhub-icon]][Finnhub-url]
 - [![Firebase][Firebase-icon]][Firebase-url]
+- [![Heroku][Heroki-icon][Heroku-url]
 
 
 [product-screenshot]: public/Screenshot1.png
@@ -28,3 +29,5 @@ A server that fetches and stores stock data. Currently in the works.
 [Finnhub-url]: https://finnhub.io/
 [Firebase-icon]: https://img.shields.io/badge/firebase-rgb(255%2C%20196%2C%200)?style=for-the-badge&logo=firebase&logoColor=%23DD2C00
 [Firebase-url]: https://firebase.google.com/
+[Heroku-icon]:
+[Heroku-url]:
