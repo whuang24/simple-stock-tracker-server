@@ -59,6 +59,7 @@ async function syncWithDatabase(symbol, currTime, currPercent) {
 }
 
 async function fetchData() {
+    console.log(stockWatchlist);
     for (let i = 0; i < stockWatchlist.length; i++) {
         const symbol = stockWatchlist[i];
 
