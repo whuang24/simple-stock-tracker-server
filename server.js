@@ -76,20 +76,21 @@ async function fetchData() {
     }
 }
 
-setInterval(async() => {
-    try {
-        await checkMarket();
-        if (marketStatus) {
+function startInterval() {
+    setInterval(async() => {
+        try {
+            await checkMarket();
             fetchData();
+        } catch (error) {
+            console.error("Error occurred while fetching data:", error);
         }
-    } catch (error) {
-        console.error("Error occurred while fetching data:", error);
-    }
-    
-}, 20000)
+        
+    }, 20000)
+}
 
 app.get('/', (req, res) => {
-    res.send("Simple Stock Tracker Server Home")
+    res.send("Simple Stock Tracker Server Home");
+    startInterval();
 })
 
 
