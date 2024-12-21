@@ -3,25 +3,18 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
 
+import { onSnapshot } from 'firebase/firestore';
 import {finnhubClient, isMarketOpen} from './finnhub.js';
 import {db, graphDataCollection} from './firebase.js';
 
 dotenv.config();
 
 const app = express();
-const router = express.Router();
 
 app.use(express.json());
 app.use(cors());
 
-let stockWatchlist = [];
-
 let marketStatus = false;
-
-app.get('/watchlist', (req, res) => {
-    res.json({watchlist: stockWatchlist});
-    console.log(`Watchlist obtained`);
-})
 
 app.post('/updating_watchlist', (req, res) => {
     const { watchlist } = req.body;
@@ -40,6 +33,15 @@ app.get('/ping', (req, res) => {
     res.send('Server is still running.')
 })
 
+async function getWatchlist() {
+    const unsubscribeListener = onSnapshot(graphDataCollection, function(snapshot) {
+        const dataArray = snapshot.docs.filter(doc => (doc.id === "watchlist")).map(doc => ({
+            ...doc.data().graphData
+        }))[0];
+
+    })
+}
+
 
 async function checkMarket() {
     const currStatus = await isMarketOpen();
@@ -47,7 +49,7 @@ async function checkMarket() {
 }
 
 async function syncWithDatabase(symbol, currTime, currPercent) {
-    const docRef = doc(db, process.env.COLLECTION_NAME, symbol)
+    const docRef = doc(db, "graphData", symbol)
     await setDoc(docRef, {
         graphData: {
             [new Date().toISOString()]: {
