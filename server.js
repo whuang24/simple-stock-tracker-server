@@ -33,13 +33,29 @@ app.get('/ping', (req, res) => {
     res.send('Server is still running.')
 })
 
+app.get('/get_watchlist', (req, res) => {
+    getWatchlist()
+})
+
 async function getWatchlist() {
     const unsubscribeListener = onSnapshot(graphDataCollection, function(snapshot) {
         const dataArray = snapshot.docs.filter(doc => (doc.id === "watchlist")).map(doc => ({
-            ...doc.data().graphData
+            ...doc.data().watchlist
         }))[0];
 
+        console.log(dataArray)
     })
+}
+
+async function setWatchlist(currWatchlist) {
+    const docRef = doc(db, "watchlist", "watchlist")
+
+    for symbol in currWatchlist:
+        await setDoc(docRef, {
+            watchlist: {
+                []
+            }
+        })
 }
 
 
