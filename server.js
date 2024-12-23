@@ -38,6 +38,7 @@ app.get('/get_watchlist', (req, res) => {
 })
 
 async function getWatchlist() {
+    stockWatchlist = []
     const unsubscribeListener = onSnapshot(graphDataCollection, function(snapshot) {
         const dataArray = snapshot.docs.filter(doc => (doc.id === "watchlist")).map(doc => ({
             ...doc.data().watchlist
@@ -45,17 +46,20 @@ async function getWatchlist() {
 
         console.log(dataArray)
     })
+
+    return stockWatchlist
 }
 
 async function setWatchlist(currWatchlist) {
     const docRef = doc(db, "watchlist", "watchlist")
 
-    for symbol in currWatchlist:
+    for (symbol in currWatchlist) {
         await setDoc(docRef, {
             watchlist: {
-                []
+                [symbol]: {}
             }
         })
+    }
 }
 
 
@@ -77,7 +81,9 @@ async function syncWithDatabase(symbol, currTime, currPercent) {
 }
 
 async function fetchData() {
-    console.log(stockWatchlist);
+
+    stockWatchlist = getWatchlist()
+
     for (let i = 0; i < stockWatchlist.length; i++) {
         const symbol = stockWatchlist[i];
 
