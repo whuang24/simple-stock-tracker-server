@@ -37,8 +37,8 @@ app.get('/get_watchlist', (req, res) => {
     getWatchlist()
 })
 
-async function getWatchlist() {
-    stockWatchlist = []
+async function getWatchlist() { 
+    var stockWatchlist = []
     const unsubscribeListener = onSnapshot(graphDataCollection, function(snapshot) {
         const dataArray = snapshot.docs.filter(doc => (doc.id === "watchlist")).map(doc => ({
             ...doc.data().watchlist
