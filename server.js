@@ -24,48 +24,59 @@ app.post('/updating_watchlist', (req, res) => {
     }
   
     stockWatchlist = watchlist;
-  
+
     res.json({ message: 'Watchlist updated', watchlist: stockWatchlist });
     console.log(`Watchlist updated: ${stockWatchlist}`);
 });
 
 app.get('/ping', (req, res) => {
     res.send('Server is still running.')
-})
+});
 
-app.get('/get_watchlist', (req, res) => {
-    getWatchlist()
-})
+app.get('/get_watchlist', async (req, res) => {
+    try {
+        const watchlist = getWatchlist();
+        res.json(watchlist);
+        console.log(watchlist);
+    } catch (error) {
+        console.error("Error fetching watchlist:", error);
+        res.status(500).json({ error: 'Failed to fetch watchlist' });
+    }
+});
 
 async function getWatchlist() { 
-    var stockWatchlist = []
+    var stockWatchlist = [];
     const unsubscribeListener = onSnapshot(graphDataCollection, function(snapshot) {
-        const dataArray = snapshot.docs.filter(doc => (doc.id === "watchlist")).map(doc => ({
-            ...doc.data().watchlist
-        }))[0];
-
-        console.log(dataArray)
-    })
-
+        const dataArray = snapshot.docs
+            .filter((doc) => doc.id === "watchlist")
+            .forEach((doc) => {
+                const data = doc.data();
+                stockWatchlist.push(...(data.watchlist || []));
+            });
+    });
     return stockWatchlist
 }
 
 async function setWatchlist(currWatchlist) {
-    const docRef = doc(db, "watchlist", "watchlist")
-
-    for (symbol in currWatchlist) {
-        await setDoc(docRef, {
-            watchlist: {
-                [symbol]: {}
-            }
-        })
+    try {
+        const docRef = doc(db, "watchlist", "watchlist");
+        await setDoc(docRef, { watchlist: currWatchlist }, { merge: true});
+        console.log("Watchlist saved to Firestore.");
+    } catch (error) {
+        console.error("Error saving watchlist:", error);
     }
 }
 
 
 async function checkMarket() {
-    const currStatus = await isMarketOpen();
-    marketStatus = currStatus;
+    try {
+        const currStatus = await isMarketOpen();
+        marketStatus = currStatus;
+        console.log(`Market status: ${marketStatus ? "Open" : "Closed"}`);
+    } catch (error) {
+        console.error("Error checking market status:", error);
+    }
+
 }
 
 async function syncWithDatabase(symbol, currTime, currPercent) {
@@ -82,7 +93,7 @@ async function syncWithDatabase(symbol, currTime, currPercent) {
 
 async function fetchData() {
 
-    stockWatchlist = getWatchlist()
+    var stockWatchlist = getWatchlist()
 
     for (let i = 0; i < stockWatchlist.length; i++) {
         const symbol = stockWatchlist[i];
@@ -121,6 +132,7 @@ app.get('/', (req, res) => {
 
 const port = process.env.PORT || 4000;
 console.log(`Assigned port: ${port}`)
+
 app.listen(port, () => {
     console.log(`Server running on ${port}`)
 })
