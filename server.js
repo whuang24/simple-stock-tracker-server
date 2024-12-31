@@ -92,23 +92,25 @@ async function syncWithDatabase(symbol, currTime, currPercent) {
 }
 
 async function fetchData() {
+    for (const symbol of stockWatchlist) {
+        try {
+            const currTime = new Date();
+            currTime.setTime(currTime.getTime() + currTime.getTimezoneOffset()*60*1000);
+            const currTimeNum = currTime.getTime();
 
-    var stockWatchlist = getWatchlist()
+            finnhubClient.quote(symbol, (error, data, response) => {
+                if (error) {
+                    console.error(`Error fetching data for ${symbol}:`, error);
+                    return;
+                }
 
-    for (let i = 0; i < stockWatchlist.length; i++) {
-        const symbol = stockWatchlist[i];
-
-        const currTime = new Date();
-
-        currTime.setTime(currTime.getTime() + currTime.getTimezoneOffset()*60*1000);
-
-        const currTimeNum = currTime.getTime();
-    
-        finnhubClient.quote(symbol, (error, data, response) => {
-            if (marketStatus) {
-                syncWithDatabase(symbol, currTimeNum, data.dp);
-            }
-        })
+                if (marketStatus && data.dp !== undefined) {
+                    syncWithDatabase(symbol, currTimeNum, data.dp);
+                }
+            });
+        } catch (error) {
+            console.error(`Error in fetchData for ${symbol}:`, error);
+        }
     }
 }
 
@@ -116,22 +118,21 @@ function startInterval() {
     setInterval(async() => {
         try {
             await checkMarket();
-            fetchData();
+            await fetchData();
         } catch (error) {
             console.error("Error occurred while fetching data:", error);
         }
-        
     }, 20000)
 }
 
+startInterval();
+
 app.get('/', (req, res) => {
     res.send("Simple Stock Tracker Server Home");
-    startInterval();
 })
 
 
 const port = process.env.PORT || 4000;
-console.log(`Assigned port: ${port}`)
 
 app.listen(port, () => {
     console.log(`Server running on ${port}`)
