@@ -5,7 +5,7 @@ import fetch from 'node-fetch';
 
 import { onSnapshot } from 'firebase/firestore';
 import {finnhubClient, isMarketOpen} from './finnhub.js';
-import {db, graphDataCollection} from './firebase.js';
+import {db, graphDataCollection, watchlistCollection} from './firebase.js';
 
 dotenv.config();
 
@@ -46,13 +46,15 @@ app.get('/get_watchlist', async (req, res) => {
 
 async function getWatchlist() { 
     var stockWatchlist = [];
-    const unsubscribeListener = onSnapshot(graphDataCollection, function(snapshot) {
+    const unsubscribeListener = onSnapshot(watchlistCollection, function(snapshot) {
         const dataArray = snapshot.docs
             .filter((doc) => doc.id === "watchlist")
             .forEach((doc) => {
                 const data = doc.data();
                 stockWatchlist.push(...(data.watchlist || []));
             });
+
+        console.log(dataArray)
     });
     return stockWatchlist
 }
@@ -125,7 +127,7 @@ function startInterval() {
     }, 20000)
 }
 
-startInterval();
+// startInterval();
 
 app.get('/', (req, res) => {
     res.send("Simple Stock Tracker Server Home");

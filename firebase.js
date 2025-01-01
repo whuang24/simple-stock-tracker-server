@@ -17,3 +17,4 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const graphDataCollection = collection(db, "graphData");
+export const watchlistCollection = collection(db, "watchlist");
