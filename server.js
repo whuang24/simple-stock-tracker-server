@@ -3,7 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
 
-import { onSnapshot } from 'firebase/firestore';
+import { onSnapshot, doc } from 'firebase/firestore';
 import {finnhubClient, isMarketOpen} from './finnhub.js';
 import {db, graphDataCollection, watchlistCollection} from './firebase.js';
 
@@ -44,19 +44,17 @@ app.get('/get_watchlist', async (req, res) => {
     }
 });
 
-async function getWatchlist() { 
-    var stockWatchlist = [];
-    const unsubscribeListener = onSnapshot(watchlistCollection, function(snapshot) {
-        const dataArray = snapshot.docs
-            .filter(doc => (doc.id === "watchlist"))
-            .map(doc => ({...doc.data().watchlist}))
+async function getWatchlist() {
+    const docRef = doc(watchlistCollection, "watchlist")
+    const unsubscribeListener = onSnapshot(docRef, function(snapshot) {
+        const watchlistData = snapshot.data();
 
-        console.log(`Data Array: ${dataArray}`)
+        var stockWatchlist = Object.keys(watchlistData);
+
+        console.log("Field IDs in watchlist:", stockWatchlist);
     });
 
-    
-    
-    return stockWatchlist
+    return unsubscribeListener;
 }
 
 async function setWatchlist(currWatchlist) {
