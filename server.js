@@ -35,7 +35,7 @@ app.get('/ping', (req, res) => {
 
 app.get('/get_watchlist', async (req, res) => {
     try {
-        const watchlist = getWatchlist();
+        var watchlist = await getWatchlist();
         res.json(watchlist);
         console.log(watchlist);
     } catch (error) {
@@ -45,16 +45,22 @@ app.get('/get_watchlist', async (req, res) => {
 });
 
 async function getWatchlist() {
-    const docRef = doc(watchlistCollection, "watchlist")
-    const unsubscribeListener = onSnapshot(docRef, function(snapshot) {
-        const watchlistData = snapshot.data();
+    const docRef = doc(watchlistCollection, "watchlist");
 
-        var stockWatchlist = Object.keys(watchlistData);
-
-        console.log("Field IDs in watchlist:", stockWatchlist);
+    return new Promise((resolve, reject) => {
+        const unsubscribeListener = onSnapshot(docRef, function(snapshot) {
+            if (snapshot.exists()) {
+                const stockWatchlist = Object.keys(snapshot.data());
+                resolve(stockWatchlist);
+            } else {
+                console.warn("Watchlist document does not exist")
+                resolve([]);
+            }
+            unsubscribeListener();
+        }, (error) => {
+            reject(error);
+        });
     });
-
-    return unsubscribeListener;
 }
 
 async function setWatchlist(currWatchlist) {
