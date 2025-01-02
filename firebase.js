@@ -1,8 +1,8 @@
-import dotenv from 'dotenv';
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection } from "firebase/firestore"
+import { getFirestore, collection } from "firebase/firestore";
+import dotenv from 'dotenv';
 
-dotenv.config();
+dotenv.config({path: "API-Keys.env"});
 
 const firebaseConfig = {
     apiKey: process.env.FIREBASE_API_KEY,
@@ -13,7 +13,6 @@ const firebaseConfig = {
     appId: process.env.FIREBASE_APP_ID
   };
   
-
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const graphDataCollection = collection(db, "graphData");

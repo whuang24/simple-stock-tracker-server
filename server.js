@@ -48,14 +48,14 @@ async function getWatchlist() {
     var stockWatchlist = [];
     const unsubscribeListener = onSnapshot(watchlistCollection, function(snapshot) {
         const dataArray = snapshot.docs
-            .filter((doc) => doc.id === "watchlist")
-            .forEach((doc) => {
-                const data = doc.data();
-                stockWatchlist.push(...(data.watchlist || []));
-            });
+            .filter(doc => (doc.id === "watchlist"))
+            .map(doc => ({...doc.data().watchlist}))
 
-        console.log(dataArray)
+        console.log(`Data Array: ${dataArray}`)
     });
+
+    
+    
     return stockWatchlist
 }
 
