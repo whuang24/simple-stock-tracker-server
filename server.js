@@ -3,7 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
 
-import { onSnapshot, doc } from 'firebase/firestore';
+import { onSnapshot, doc, setDoc } from 'firebase/firestore';
 import {finnhubClient, isMarketOpen} from './finnhub.js';
 import {db, graphDataCollection, watchlistCollection} from './firebase.js';
 
@@ -16,22 +16,32 @@ app.use(cors());
 
 let marketStatus = false;
 
-app.post('/updating_watchlist', (req, res) => {
+app.post('/updating_watchlist', async (req, res) => {
     const { watchlist } = req.body;
   
     if (!watchlist) {
       return res.status(400).json({ error: 'Watchlist data is required' });
     }
-  
-    stockWatchlist = watchlist;
 
-    res.json({ message: 'Watchlist updated', watchlist: stockWatchlist });
-    console.log(`Watchlist updated: ${stockWatchlist}`);
+    try {
+        await setWatchlist(watchlist);
+        res.json({message: 'Watchlist updated', watchlist});
+        console.log(`Watchlist updated:`, watchlist);
+    } catch (error) {
+        console.error("Error updating watchlist:", error);
+        res.status(500).json({ error: 'Failed to update watchlist' });
+    }
 });
 
-app.get('/ping', (req, res) => {
-    res.send('Server is still running.')
-});
+async function setWatchlist(currWatchlist) {
+    try {
+        const docRef = doc(db, "watchlist", "watchlist");
+        await setDoc(docRef, currWatchlist, { merge: true});
+        console.log("Watchlist saved to Firestore.");
+    } catch (error) {
+        console.error("Error saving watchlist:", error);
+    }
+}
 
 app.get('/get_watchlist', async (req, res) => {
     try {
@@ -63,15 +73,9 @@ async function getWatchlist() {
     });
 }
 
-async function setWatchlist(currWatchlist) {
-    try {
-        const docRef = doc(db, "watchlist", "watchlist");
-        await setDoc(docRef, { watchlist: currWatchlist }, { merge: true});
-        console.log("Watchlist saved to Firestore.");
-    } catch (error) {
-        console.error("Error saving watchlist:", error);
-    }
-}
+app.get('/ping', (req, res) => {
+    res.send('Server is still running.')
+});
 
 
 async function checkMarket() {
