@@ -73,6 +73,7 @@ async function getWatchlist() {
     });
 }
 
+
 app.get('/ping', (req, res) => {
     res.send('Server is still running.')
 });
@@ -101,8 +102,8 @@ async function syncWithDatabase(symbol, currTime, currPercent) {
     }, {merge: true})
 }
 
-async function fetchData() {
-    for (const symbol of stockWatchlist) {
+async function fetchData(currWatchlist) {
+    for (const symbol of currWatchlist) {
         try {
             const currTime = new Date();
             currTime.setTime(currTime.getTime() + currTime.getTimezoneOffset()*60*1000);
@@ -125,17 +126,37 @@ async function fetchData() {
 }
 
 function startInterval() {
-    setInterval(async() => {
+    let intervalId;
+    const runIntervalTask = async() => {
         try {
-            await checkMarket();
-            await fetchData();
+            const currWatchlist = await getWatchlist();
+
+            if (!currWatchlist || currWatchlist.length === 0) {
+                console.warn("Watchlist is empty. Skipping fetch operation.");
+                return;
+            }
+
+            const marketStatus = await checkMarket();
+            if (!marketStatus) {
+                console.log("Market is closed. Skipping data fetch.");
+                return;                
+            }
+
+            await fetchData(currWatchlist);
+            console.log("Interval task completed.");
         } catch (error) {
             console.error("Error occurred while fetching data:", error);
         }
-    }, 20000)
+    };
+
+    runIntervalTask();
+
+    intervalId = setInterval(runIntervalTask, 20000);
+
+    return intervalId;
 }
 
-// startInterval();
+startInterval();
 
 app.get('/', (req, res) => {
     res.send("Simple Stock Tracker Server Home");
