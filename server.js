@@ -36,7 +36,7 @@ app.post('/updating_watchlist', async (req, res) => {
 async function setWatchlist(currWatchlist) {
     try {
         const docRef = doc(db, "watchlist", "watchlist");
-        await setDoc(docRef, currWatchlist, { merge: true});
+        await setDoc(docRef, currWatchlist, { merge: false});
         console.log("Watchlist saved to Firestore.");
     } catch (error) {
         console.error("Error saving watchlist:", error);
@@ -46,8 +46,11 @@ async function setWatchlist(currWatchlist) {
 app.get('/get_watchlist', async (req, res) => {
     try {
         var watchlist = await getWatchlist();
+        if (!Array.isArray(watchlist)) {
+            console.error("Watchlist type incorrect");
+        }
         res.json(watchlist);
-        console.log(watchlist);
+        console.log("Watchlist fetched:", watchlist);
     } catch (error) {
         console.error("Error fetching watchlist:", error);
         res.status(500).json({ error: 'Failed to fetch watchlist' });
