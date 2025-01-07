@@ -7,7 +7,7 @@ import { onSnapshot, doc, setDoc } from 'firebase/firestore';
 import {finnhubClient, isMarketOpen} from './finnhub.js';
 import {db, graphDataCollection, watchlistCollection} from './firebase.js';
 
-dotenv.config();
+dotenv.config({path: "API-Keys.env"});
 
 const app = express();
 
@@ -166,8 +166,9 @@ app.get('/', (req, res) => {
     res.send("Simple Stock Tracker Server Home");
 })
 
-
 const port = process.env.PORT || 4000;
+
+console.log(process.env.PORT)
 
 app.listen(port, () => {
     console.log(`Server running on ${port}`)
