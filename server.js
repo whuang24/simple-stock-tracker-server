@@ -118,11 +118,9 @@ async function fetchData(currWatchlist) {
                     return;
                 }
 
-                syncWithDatabase(symbol, currTimeNum, data.dp);
-
-                // if (marketStatus && data.dp !== undefined) {
-                    
-                // }
+                if (marketStatus && data.dp !== undefined) {
+                    syncWithDatabase(symbol, currTimeNum, data.dp);
+                }
             });
         } catch (error) {
             console.error(`Error in fetchData for ${symbol}:`, error);
@@ -137,16 +135,16 @@ function startInterval() {
         try {
             const currWatchlist = await getWatchlist();
 
-            // if (!currWatchlist || currWatchlist.length === 0) {
-            //     console.warn("Watchlist is empty. Skipping fetch operation.");
-            //     return;
-            // }
+            if (!currWatchlist || currWatchlist.length === 0) {
+                console.warn("Watchlist is empty. Skipping fetch operation.");
+                return;
+            }
 
-            // const marketStatus = await checkMarket();
-            // if (!marketStatus) {
-            //     console.log("Market is closed. Skipping data fetch.");
-            //     return;                
-            // }
+            const marketStatus = await checkMarket();
+            if (!marketStatus) {
+                console.log("Market is closed. Skipping data fetch.");
+                return;                
+            }
 
             await fetchData(currWatchlist);
             console.log("Interval task completed.");
