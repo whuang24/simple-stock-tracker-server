@@ -129,6 +129,7 @@ async function fetchData(currWatchlist) {
 }
 
 function startInterval() {
+    console.log("Interval started");
     let intervalId;
     const runIntervalTask = async() => {
         try {
