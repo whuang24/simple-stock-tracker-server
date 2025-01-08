@@ -87,10 +87,13 @@ async function checkMarket() {
         const currStatus = await isMarketOpen();
         marketStatus = currStatus;
         console.log(`Market status: ${marketStatus ? "Open" : "Closed"}`);
+        return marketStatus
     } catch (error) {
         console.error("Error checking market status:", error);
+        return false
     }
 
+    
 }
 
 async function syncWithDatabase(symbol, currTime, currPercent) {
