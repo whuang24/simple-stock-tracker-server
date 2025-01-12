@@ -23,6 +23,11 @@ A server that fetches and stores stock data. Currently in the works.
 - [![Firebase][Firebase-icon]][Firebase-url]
 - [![Heroku][Heroku-icon]][Heroku-url]
 
+- ## Roadmap
+- [ ] Store user IP address in Firebase and each IP address would contain individual watchlist
+- [ ] Auto clear data from more than a week ago
+- [ ] Store stock price and stock percentage change for chart toggle
+
 
 [product-screenshot]: public/Screenshot1.png
 [Finnhub-icon]: https://img.shields.io/badge/Finnhub-1DB954?style=for-the-badge
