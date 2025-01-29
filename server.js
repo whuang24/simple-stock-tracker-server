@@ -3,7 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
 
-import { onSnapshot, doc, setDoc } from 'firebase/firestore';
+import { onSnapshot, doc, setDoc, getDoc} from 'firebase/firestore';
 import {finnhubClient, isMarketOpen} from './finnhub.js';
 import {db, graphDataCollection, watchlistCollection} from './firebase.js';
 
@@ -86,7 +86,7 @@ async function checkMarket() {
     try {
         const currStatus = await isMarketOpen();
         marketStatus = currStatus;
-        console.log(`Market status: ${marketStatus ? "Open" : "Closed"}`);
+        console.log(`Market status: ${marketStatus}`);
         return marketStatus
     } catch (error) {
         console.error("Error checking market status:", error);
@@ -161,6 +161,50 @@ function startInterval() {
     intervalId = setInterval(runIntervalTask, 20000);
 
     return intervalId;
+}
+
+
+async function deleteOldEntries() {
+    try {
+        const currWatchlist = await getWatchlist();
+
+        if (!currWatchlist || currWatchlist.length === 0) {
+            console.warn("Watchlist is empty. Skipping fetch operation.");
+            return;
+        }
+
+        for (const symbol of currWatchlist) {
+            try {
+                const docRef = doc(db, "graphData", symbol);
+                const docSnap = await getDoc(docRef);
+
+
+                if (!docSnap.exists()) {
+                    console.warn(`No document found for symbol: ${symbol}`);
+                    return;
+                }
+
+                const data = docSnap.data().graphData;
+                const now = new Date();
+                const fiveDaysAgo = new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000);
+
+                const updatedData = {};
+                for (const [timestamp, entry] of Object.entries(data)) {
+                    const entryDate = new Date(timestamp);
+                    if (entryDate >= fiveDaysAgo) {
+                        updatedData[timestamp] = entry;
+                    }
+                }
+
+                await setDoc(docRef, { graphData: updatedData }, { merge: true });
+                console.log(`Old entries deleted for symbol: ${symbol}`);
+            } catch (error) {
+                console.error(`Error deleting old entries for symbol ${symbol}:`, error);
+            }
+        }
+    } catch (error) {
+        console.error(`Error occurred while fetching data:`, error);
+    }
 }
 
 startInterval();
